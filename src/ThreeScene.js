@@ -10,7 +10,7 @@ import Model from './components/Model';
 import Menu from './components/Menu';
 
 const ThreeScene = () => {
-   
+    // State
     const [playAnimation, setPlayAnimation] = useState(false);
     const [expression, setExpression] = useState(null);
     const [selectedAnimation, setSelectedAnimation] = useState(null);
@@ -25,13 +25,13 @@ const ThreeScene = () => {
     const [directionalLightPosition, setDirectionalLightPosition] = useState([2000, 2000, 2000]);
     const [pointLightPosition, setPointLightPosition] = useState([10, 10, 10]);
 
- 
+    // Handlers
     const handleExpressionButtonClick = (expr) => {
         setExpression(expr);
     };
 
 
-  
+    // Handlers
     const handleAnimationSelection = (animationIndex) => {
         let newHdrFile = '/assets/lilienstein_1k.hdr';
         let newCameraPosition = [1000, 1000, 1000];
@@ -83,7 +83,7 @@ const ThreeScene = () => {
 
 
 
-
+    // Helper Functions
     const updateCameraPosition = (controls, newPosition) => {
         controls.target.set(0, 0, 0);
         controls.object.position.set(newPosition[0], newPosition[1], newPosition[2]);
@@ -93,14 +93,14 @@ const ThreeScene = () => {
     return (
         <div>
             <Canvas camera={{ position: cameraPosition, fov: 75, near: 1, far: 5000 }} style={{ backgroundColor: "white", position: "relative", width: "100%", height: "100vh" }}>
-           
+                {/* Lights and Environment */}
                 <directionalLight position={directionalLightPosition} intensity={1} color="white" />
                 <pointLight position={pointLightPosition} intensity={0.6} />
                 <ambientLight intensity={ambientLightIntensity} />
                 <directionalLight color="white" position={[0, 3, 5]} />
                 <Environment background={true} files={[hdrFile]} environmentIntensity={environmentIntensity} />
 
-            
+                {/* Models and Controls */}
                 <Suspense fallback={null}>
                     <Model playAnimation={playAnimation} expression={expression} selectedAnimation={selectedAnimation} />
                     {console.log(showDiscoBall)}
@@ -111,7 +111,7 @@ const ThreeScene = () => {
                 <OrbitControls ref={controlsRef} />
             </Canvas>
 
-           
+            {/* Menu */}
             <Menu
                 handleExpressionButtonClick={handleExpressionButtonClick}
                 handleAnimationSelection={handleAnimationSelection}
