@@ -12,20 +12,24 @@ const createMixer = (scene) => {
     return globalMixer;
 };
 
-const ModularTrack = () => {
+const ModularTrack = (props) => {
     const gltf = useGLTF("/assets/modular_track_roads_free.glb");
     const mixer = useRef(createMixer(gltf.scene));
     gltf.scene.scale.set(200, 200, 200);
     gltf.scene.position.set(3000, 0, -2000);
     gltf.scene.rotation.set(0, 4.8, 0);
 
+    const { opacity } = props;
+
     useEffect(() => {
+        gltf.scene.traverse((child) => {
+            if (child.isMesh) {
+                child.material.transparent = true;
+                child.material.opacity = opacity;
+            }
+        });
+    }, [gltf,opacity]);
 
-
-        return () => {
-  
-        };
-    }, [gltf]);
 
     return <primitive object={gltf.scene} />;
 };

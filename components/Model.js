@@ -1,23 +1,16 @@
 import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 import { useEffect, useRef } from 'react';
-import { useFrame } from '@react-three/fiber';
-
-
-let globalMixer;
-
-const createMixer = (scene) => {
-    if (!globalMixer) {
-        globalMixer = new THREE.AnimationMixer(scene);
-    }
-    return globalMixer;
-};
 
 const Model = ({ playAnimation, expression, selectedAnimation }) => {
     const gltf = useGLTF("/assets/RobotExpressive.glb");
-    const mixer = useRef(createMixer(gltf.scene));
+    const mixer = useRef();
 
     gltf.scene.scale.set(200, 200, 200);
+
+    if (!mixer.current) {
+        mixer.current = new THREE.AnimationMixer(gltf.scene);
+    }
 
     useEffect(() => {
         gltf.scene.traverse((child) => {
@@ -45,29 +38,28 @@ const Model = ({ playAnimation, expression, selectedAnimation }) => {
         });
     }, [gltf.scene, expression]);
 
-    useFrame((state, delta) => mixer.current.update(delta));
-
     useEffect(() => {
         const action = mixer.current.clipAction(gltf.animations[10]);
         action.play();
 
         if (playAnimation) {
             action.stop();
-            const newAction = mixer.current.clipAction(gltf.animations[0]);
-            newAction.play();
+            const Newaction = mixer.current.clipAction(gltf.animations[0]);
+            Newaction.play();
         }
 
         const Newaction0 = mixer.current.clipAction(gltf.animations[0]);
         const Newaction1 = mixer.current.clipAction(gltf.animations[6]);
         const Newaction7 = mixer.current.clipAction(gltf.animations[7]);
+
         switch (selectedAnimation) {
             case 0:
-                    mixer.current.timeScale = 1;
-                    action.stop();
-                    Newaction0.stop();
-                    Newaction1.stop();
-                    Newaction7.stop();
-                    Newaction0.play();          
+                mixer.current.timeScale = 1;
+                action.stop();
+                Newaction0.stop();
+                Newaction1.stop();
+                Newaction7.stop();
+                Newaction0.play();
                 break;
             case 6:
                 mixer.current.timeScale = 1;
@@ -84,15 +76,15 @@ const Model = ({ playAnimation, expression, selectedAnimation }) => {
                 Newaction7.stop();
                 Newaction7.play();
                 mixer.current.timeScale = 0.6;
+
                 const checkAnimationTime = () => {
                     if (Newaction7.time >= 0.30321343267709167) {
-
+                        console.log(Newaction7.time);
                         Newaction7.paused = true;
                         clearInterval(intervalId);
                     }
                 };
                 const intervalId = setInterval(checkAnimationTime, 10);
-
                 break;
             case 10:
                 mixer.current.timeScale = 1;
@@ -104,7 +96,6 @@ const Model = ({ playAnimation, expression, selectedAnimation }) => {
             default:
                 break;
         }
-
     }, [playAnimation, selectedAnimation]);
 
     return <primitive object={gltf.scene} />;
